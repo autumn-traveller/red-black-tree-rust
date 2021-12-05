@@ -1,0 +1,134 @@
+#[derive(Debug)]
+enum RB{
+    Red,
+    Black
+}
+
+type RBTree<T> = Node<T>;
+
+struct Node<T> {
+
+    left: Option<Box<Node<T>>>,
+    right: Option<Box<Node<T>>>,
+    data: i32,
+    value: T,
+    rb : RB,
+    str_func: fn(&T) -> String
+
+}
+
+impl<T> Node<T> {
+    
+    fn find(id: i32) -> Node<T> {
+        unfinished_implementation!();
+    }
+
+    // fn new(d: i32,rb : RB) -> Node {
+    //     Node {
+    //         left: None, right: None, data: d, rb: rb
+    //     }
+
+    // }
+
+    fn insert(&mut self,node : Node<T>) -> () {
+        let mut i : &mut Node<T> = self;
+        loop{
+            if i.data > node.data {
+               match i.left {
+                    Some(ref mut child) => {
+                        i = child; 
+                    },
+                    None => {
+                        i.left = Some(Box::new(node));
+                        break;
+                    }
+               } 
+            } else {
+                match i.right {
+                    Some(ref mut child) => {
+                        i = child;
+                    },
+                    None => {
+                        i.right = Some(Box::new(node));
+                        break;
+                    }
+                }
+            }
+        }
+        // *self
+
+    }
+
+
+    fn stringify(&self) -> String {
+        let mut ls = String::new();
+        let mut rs = String::new();
+        if let Some(l) = &self.left {
+            ls = (*l).stringify_tree()
+        }
+        if let Some(r) = &self.right {
+            rs = (*r).stringify_tree()
+        }
+
+
+        format!("{} *{}: {}* {}",ls,self.data,(self.str_func)(&self.value),rs)
+    }
+
+    fn stringify_tree(&self) -> String {
+        let mut ls = String::new();
+        let mut rs = String::new();
+        if let Some(l) = &self.left {
+            ls = (*l).stringify_tree()
+        }
+        if let Some(r) = &self.right {
+            rs = (*r).stringify_tree()
+        }
+
+
+        format!("{} ({}: {}) {}",ls,self.data,(self.str_func)(&self.value),rs)
+    }
+
+}
+ 
+use std::fmt;
+
+impl<T> fmt::Display for Node<T> {
+    
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f,"{}",self.stringify_tree())
+    }
+
+} 
+impl<T> fmt::Debug for Node<T> {
+    
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f,"{}",self.stringify())
+    }
+
+}
+
+fn id(s: &String) -> String {
+    String::from(s)
+}
+
+fn main() {
+
+    let mut root = RBTree::<String>{data: 5,left: None,right: None, value: String::from("foo"), rb: RB::Black,str_func: id};
+    let mut n1 = Node::<String>{data: 11,left: None,right: None, rb: RB::Red,value: String::from("bar"),str_func: id};
+    let mut n2 = Node::<String>{data: 1,left: None,right: None, rb: RB::Red,value: String::from("189.2"),str_func: id};
+    // let mut n2 = Node{data: 2,left: None,right: None, rb: RB::Black};
+    // let mut n3 = Node{data: 33,left: None,right: None, rb: RB::Red};
+    // let mut n4 = Node{data: 4,left: None,right: None, rb: RB::Black};
+    // let mut n5 = Node{data: 8,left: None,right: None, rb: RB::Black};
+
+    root.insert(n1);
+    root.insert(n2);
+    // root.insert(n3);
+    // root.insert(n4);
+    // root.insert(n5);
+
+    println!("Root node display : {}",root);
+    println!("Root node debug : {:?}",root);
+    println!("FUCKER1: {}",root.right.as_ref().unwrap());
+    println!("FUCKER1: {:?}",*root.right.as_ref().unwrap());
+}
