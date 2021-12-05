@@ -9,25 +9,42 @@ pub type RBTree<T> = Node<T>;
 pub struct Node<T> {
 
     left: Option<Box<Node<T>>>,
-    pub right: Option<Box<Node<T>>>,
-    // right: Option<Box<Node<T>>>,
-    data: i32,
+    right: Option<Box<Node<T>>>,
+    id: i32,
     pub value: T,
     rb : RB,
     str_func: fn(&T) -> String
 
 }
 
+use std::cmp::max;
+
 impl<T> Node<T> {
-    
+
+    pub fn max_depth(&self) -> i32 {
+        let mut i : &Node<T> = self;
+        loop{
+            if i.left.is_none() && i.right.is_none() {
+                return 1;
+            }
+            let l = if i.left.is_some() {i.left.as_ref().unwrap().max_depth()} else {0};
+            let r = if i.right.is_some() {i.right.as_ref().unwrap().max_depth()} else {0};
+            return max(l,r) + 1;
+        }
+    }
+
+    pub fn remove(&mut self, id: i32) -> Option<Node<T>> {
+        unimplemented!();
+    }
+
     pub fn find(&self,id: i32) -> Option<&Node<T>> {
         let mut i : &Node<T> = self;
         loop{
-            if i.data == id {
+            if i.id == id {
                 return Some(i);
             }
             
-            if i.data > id {
+            if i.id > id {
                 match i.left {
                     Some(ref child) => {
                         i = child; 
@@ -52,7 +69,7 @@ impl<T> Node<T> {
 
     pub fn new(id: i32, rb : RB, val : T, pfunc : fn(&T) -> String) -> Node<T> {
         Node {
-            left: None, right: None, data:id, rb: rb, value: val, str_func: pfunc
+            left: None, right: None, id:id, rb: rb, value: val, str_func: pfunc
         }
 
     }
@@ -60,7 +77,7 @@ impl<T> Node<T> {
     pub fn insert(&mut self,node : Node<T>) -> () {
         let mut i : &mut Node<T> = self;
         loop{
-            if i.data > node.data {
+            if i.id > node.id {
                 match i.left {
                     Some(ref mut child) => {
                         i = child; 
@@ -98,7 +115,7 @@ impl<T> Node<T> {
         }
 
 
-        format!("{} *{}: {}* {}",ls,self.data,(self.str_func)(&self.value),rs)
+        format!("{} *{}: {}* {}",ls,self.id,(self.str_func)(&self.value),rs)
     }
 
     pub fn stringify_tree(&self) -> String {
@@ -112,7 +129,7 @@ impl<T> Node<T> {
         }
 
 
-        format!("{} ({}: {}) {}",ls,self.data,(self.str_func)(&self.value),rs)
+        format!("{} ({}: {}) {}",ls,self.id,(self.str_func)(&self.value),rs)
     }
 
 }
